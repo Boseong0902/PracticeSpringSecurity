@@ -1,6 +1,7 @@
 package SprSecu.demo.config;
 
 
+import SprSecu.demo.jwt.JWTUtil;
 import SprSecu.demo.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration){
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
         this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -35,11 +38,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+
         http.csrf((auth) -> auth.disable());
         http.formLogin((form) -> form.disable());
         http.httpBasic((auth) -> auth.disable());
 
-        http.addFilterAt(new LoginFilter(authenticationmanager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationmanager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/login", "/", "/signup").permitAll()
