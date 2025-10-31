@@ -32,7 +32,4 @@ public class SignupService {
 
         userRepository.save(data);
     }
-
-
-
 }
