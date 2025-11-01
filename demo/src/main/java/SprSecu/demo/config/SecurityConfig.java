@@ -1,6 +1,7 @@
 package SprSecu.demo.config;
 
 
+import SprSecu.demo.jwt.JWTFilter;
 import SprSecu.demo.jwt.JWTUtil;
 import SprSecu.demo.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +43,8 @@ public class SecurityConfig {
         http.csrf((auth) -> auth.disable());
         http.formLogin((form) -> form.disable());
         http.httpBasic((auth) -> auth.disable());
+
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http.addFilterAt(new LoginFilter(authenticationmanager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
